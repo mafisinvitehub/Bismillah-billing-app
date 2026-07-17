@@ -46,7 +46,7 @@ export default function DashboardLayout({
     const filteredMenu = menu.filter((item) => {
         if (role === "admin") return true;
 
-        if (role === "staff" && (item.path === "/users" || item.path === "/customers")) {
+        if (role === "staff" && (item.path === "/users" || item.path === "/customers" || item.path === "/reports")) {
             return false;
         }
 

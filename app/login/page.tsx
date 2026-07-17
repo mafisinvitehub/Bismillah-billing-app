@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import toast from "react-hot-toast";
@@ -12,6 +12,18 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+
+    useEffect(() => {
+        async function checkAuth() {
+            const res = await fetch("/api/me");
+
+            if (res.ok) {
+                router.replace("/dashboard");
+            }
+        }
+
+        checkAuth();
+    }, []);
 
     async function handleLogin() {
         setLoading(true);

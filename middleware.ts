@@ -22,7 +22,7 @@ export async function middleware(req: NextRequest) {
         const role = payload.role;
 
         // 🔥 STAFF RESTRICTIONS
-        const restrictedForStaff = ["/users", "/customers"];
+        const restrictedForStaff = ["/users", "/customers", "/reports"];
 
         if (
             role === "staff" &&
@@ -41,6 +41,7 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
     matcher: [
+        "/",
         "/dashboard/:path*",
         "/pos/:path*",
         "/orders/:path*",
