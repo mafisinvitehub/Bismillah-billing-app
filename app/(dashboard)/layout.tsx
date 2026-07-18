@@ -26,6 +26,27 @@ export default function DashboardLayout({
 
     const [open, setOpen] = useState(false);
     const [role, setRole] = useState("");
+    const [showHeader, setShowHeader] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
+
+    useEffect(() => {
+        function handleScroll() {
+            const currentScrollY = window.scrollY;
+
+            if (currentScrollY < 50) {
+                setShowHeader(true);
+            } else if (currentScrollY > lastScrollY) {
+                setShowHeader(false);
+            } else {
+                setShowHeader(true);
+            }
+
+            setLastScrollY(currentScrollY);
+        }
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, [lastScrollY]);
 
     useEffect(() => {
         const storedRole = localStorage.getItem("role");
@@ -133,37 +154,46 @@ export default function DashboardLayout({
             <div className="flex-1 flex flex-col min-w-0">
 
                 {/* HEADER */}
-                <div className="flex justify-between items-center p-4 bg-white border-b">
-                    <div className="flex items-center gap-3">
+                <div
+                    className={`
+        lg:sticky lg:top-0
+        fixed top-0 left-0 right-0 lg:left-64
+        z-40 bg-white border-b
+        transition-transform duration-300
+        ${showHeader ? "translate-y-0" : "-translate-y-full"}
+        lg:translate-y-0
+    `}
+                >
+                    <div className="flex justify-between items-center p-4">
 
-                        {/* MOBILE MENU BUTTON */}
+                        {/* LEFT */}
+                        <div className="flex items-center gap-3">
+                            <button
+                                onClick={() => setOpen(true)}
+                                className="lg:hidden text-xl text-primary"
+                            >
+                                ☰
+                            </button>
+
+                            <h2 className="font-semibold text-gray-800 capitalize">
+                                {pathname.replace("/", "")}
+                            </h2>
+                        </div>
+
+                        {/* RIGHT */}
                         <button
-                            onClick={() => setOpen(true)}
-                            className="lg:hidden text-xl text-primary"
+                            onClick={handleLogout}
+                            className="group border border-transparent text-primary px-4 py-2 rounded-lg flex items-center gap-2 
+            hover:bg-primary hover:text-white hover:shadow-md transition-all duration-200 cursor-pointer"
                         >
-                            ☰
+                            <LuLogOut size={20} />
+                            <span className="hidden sm:inline">Logout</span>
                         </button>
-
-                        <h2 className="font-semibold text-gray-800 capitalize">
-                            {pathname.replace("/", "")}
-                        </h2>
                     </div>
-
-                    <button
-                        onClick={handleLogout}
-                        className="group border border-transparent text-primary px-4 py-2 rounded-lg flex items-center gap-2 
-hover:bg-primary hover:text-white hover:shadow-md transition-all duration-200 cursor-pointer"
-                    >
-                        <LuLogOut
-                            size={20}
-                            className="transition-transform duration-200 group-hover:rotate-12"
-                        />
-                        Logout
-                    </button>
                 </div>
 
                 {/* CONTENT */}
-                <div className="p-4 overflow-x-hidden">{children}</div>
+                <div className="p-4 pt-20 lg:pt-4 overflow-x-hidden">{children}</div>
             </div>
         </div>
     );
